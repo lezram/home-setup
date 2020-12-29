@@ -1,0 +1,21 @@
+- id: '1597349423108'
+  alias: Room >65%
+  description: ''
+  trigger:
+    - above: 65
+      device_id: 4079e22dcc064dda939fc0783c587cdb
+      domain: sensor
+      entity_id: sensor.humidity
+      for:
+        hours: 0
+        minutes: 30
+        seconds: 0
+      platform: device
+      type: humidity
+  condition: [ ]
+  action:
+    - data_template:
+        message: Humidity {{trigger.to_state.state}}% above {{trigger.above}}%
+        title: '*WARNING*'
+      service: telegram_bot.send_message
+  mode: single
