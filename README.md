@@ -31,6 +31,7 @@ My home server setup for home monitoring and non-cloud apps.
     }
     ```
   * Add dhcp config within rootfs
+    (On mac you can mount it with ext4fuse; https://piratefache.ch/mount-raspberry-pi-sd-card-on-mac-os/)
     `/etc/dhcpcd.conf`
     ```
     interface eth0
