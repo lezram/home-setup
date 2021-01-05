@@ -1,0 +1,16 @@
+version: '3'
+services:
+  bitwarden:
+    image: bitwardenrs/server:testing
+    restart: unless-stopped
+    ports:
+      - 8080:80
+      - 3012:3012
+      - 8081:443
+    volumes:
+      - /opt/bitwarden/data:/data
+      - /opt/certs:/ssl
+    environment:
+      DOMAIN: 'https://home.<custom_domain>:8080'
+      ROCKET_TLS: '{certs = "/ssl/ssl-bundle.crt", key = "/ssl/private.key"}'
+      WEBSOCKET_ENABLED: 'true'

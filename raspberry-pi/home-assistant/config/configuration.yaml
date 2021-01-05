@@ -1,0 +1,24 @@
+http:
+  ssl_certificate: /config/ssl-bundle.crt
+  ssl_key: /config/private.key
+
+default_config:
+
+logger:
+  default: warning
+  logs:
+    homeassistant.components.mqtt: debug
+
+discovery:
+
+mqtt:
+  discovery: true
+  discovery_prefix: homeassistant
+
+telegram_bot:
+  - platform: broadcast
+    api_key: "<telegram api key>"
+    allowed_chat_ids:
+      - "<chat id>"
+
+automation: !include automations.yaml
