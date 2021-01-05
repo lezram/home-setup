@@ -30,21 +30,15 @@ My home server setup for home monitoring and non-cloud apps.
       psk="<wifi_password>"
     }
     ```
-  * Add dhcp config within rootfs
-    (On mac you can mount it with ext4fuse; https://piratefache.ch/mount-raspberry-pi-sd-card-on-mac-os/)
+  * Add pre-config for dhcp within rootfs
+    (On macOS you can mount it with ext4fuse; https://piratefache.ch/mount-raspberry-pi-sd-card-on-mac-os/) \
     `/etc/dhcpcd.conf`
     ```
-    interface eth0
-    static ip_address=192.168.0.5/24
-    #static ip6_address=fd51:42f8:caae:d92e::ff/64
-    static routers=192.168.0.1
-    static domain_name_servers=8.8.8.8 1.1.1.1 192.168.0.1 fd51:42f8:caae:d92e::1
-    
-    interface wlan0
-    static ip_address=192.168.0.6/24
-    #static ip6_address=fd51:42f8:caae:d92e::ff/64
-    static routers=192.168.0.1
-    static domain_name_servers=8.8.8.8 1.1.1.1 192.168.0.1 fd51:42f8:caae:d92e::1
+    interface eth0 # or 'wlan0' or any other interface
+    static ip_address=192.168.1.2/24
+    # static ip6_address=:::::/64
+    static routers=192.168.1.1
+    static domain_name_servers=8.8.8.8 1.1.1.1 192.168.1.1
     ```
 2. [Install Docker](https://phoenixnap.com/kb/docker-on-raspberry-pi)
     ```
@@ -60,27 +54,32 @@ My home server setup for home monitoring and non-cloud apps.
 
 ### home-assistant
 
-1. copy home-assistant config
-2. copy mosquitto
-3. Go to home-assistant folder
-4. `docker-compose up -d`
-5. Add mosquitto mosquitto_passwd
-6. Copy custom script `send_data_raspberry_and_dht21.py`
-7. Add script to crontab
-  ```bash
-  crontab -e
-  
-  */5 * * * * /.../send_data_raspberry_and_dht21.py
-  ```
+1. copy the [config](raspberry-pi) to the raspberry pi
+2. Create config folders (if config folders are changed, update [`docker-compose.yaml`](raspberry-pi/home-assistant/docker-compose.yaml))
+    ```
+    mkdir /opt/homeassistant/config
+    mkdir /opt/homeassistant/config
+    mkdir /opt/mosquitto/config
+    mkdir /opt/mosquitto/data
+    mkdir /opt/mosquitto/log
+    mkdir /opt/bitwarden/data
+    mkdir /opt/certs
+    ```
+4. Run `docker-compose up -d` in folder [`home-assistant`](raspberry-pi/home-assistant)
+5. Add mosquitto password file `mosquitto_passwd` (**TODO** add detailed description)
+7. Run the python script for raspberry sensors every 5 minutes.
+  * **TODO**; detailed `pip install`/dependency instructions
+  * Add script to crontab
+      ```bash
+      crontab -e
+      
+      */5 * * * * /.../send_data_raspberry_and_dht21.py
+      ```
 
-### Bitwarden
-1. Go to botwarden folder
-2. `docker-compose up -d`
-
-### ESP8266 + Sensor
+#### ESP8266 + Sensor
 Setup inspired by [home-assistant sample](https://www.home-assistant.io/blog/2015/10/11/measure-temperature-with-esp8266-and-report-to-mqtt/).
 
-The 3 ESP8266 have each a BME280 sensor connected 
+The 3 ESP8266 have each a BME280 sensor connected
 and are configured for MQTT auto-detection with home-assistant.
 
 1. Install [Arduino IDE](https://www.arduino.cc/en/software)
@@ -89,5 +88,12 @@ and are configured for MQTT auto-detection with home-assistant.
 3. Plugin the controller
 
 
+### Bitwarden
+1. Go to [bitwarden folder](./raspberry-pi/bitwarden)
+2. Run `docker-compose up -d`
+
 ## Open
-* SSL configuration needs to be improved
+* Detailed mosquitto and home assistant auto detection setup
+* python script dependency installation 
+* ssl/tls config description
+* nginx proxy
